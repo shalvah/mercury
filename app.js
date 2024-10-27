@@ -16,8 +16,9 @@ const db = new DatabaseSync('db.sqlite')
 db.exec(`
     CREATE TABLE IF NOT EXISTS readings
     (
-        value      REAL    NOT NULL,
-        created_at INTEGER NOT NULL
+        temperature REAL    NOT NULL,
+        humidity    REAL    NOT NULL,
+        created_at  INTEGER NOT NULL
     ) STRICT
 `)
 
@@ -29,13 +30,14 @@ app.post(
   '/readings',
   bearerAuth({token}),
   (c) => {
-    const reading = c.req.query('r')
+    const temperature = c.req.query('temp')
+    const humidity = c.req.query('hum')
     const ts = c.req.query('ts')
 
     console.log({ reading, ts })
 
-    const insert = db.prepare('INSERT INTO readings (value, created_at) VALUES (?, ?)')
-    const result = insert.run(reading, ts)
+    const insert = db.prepare('INSERT INTO readings (temperature, humidity, created_at) VALUES (?, ?, ?)')
+    const result = insert.run(temperature, humidity, ts)
 
     return c.text(result.changes, 201)
   })
@@ -49,21 +51,42 @@ app.get(
     const readings = query.all();
 
     const html = `
-      <div><canvas id="myChart"></canvas></div>
+      <div><canvas id="temperatureCanvas"></canvas></div>
+      <div><canvas id="humidityCanvas"></canvas></div>
 
       <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
       <script src="https://cdn.jsdelivr.net/npm/luxon@^2"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1"></script>
       
       <script>
-        const ctx = document.getElementById('myChart');
-        const chart = new Chart(ctx, {
+        const temperatureChart = new Chart(document.getElementById('temperatureCanvas'), {
           type: 'line',
           data: {
             labels: ${JSON.stringify(readings.map(r => r.created_at * 1000))},
             datasets: [{
               label: "Temperature",
-              data: ${JSON.stringify(readings.map(r => r.value))},
+              data: ${JSON.stringify(readings.map(r => r.temperature))},
+              borderColor: 'rgb(75, 192, 192)',
+            }],
+          },
+          options: {
+            scales: {
+              x: {
+                type: 'timeseries',
+                time: {
+                    unit: 'second',
+                }
+              }
+            }
+          }
+        });
+        const humidityChart = new Chart(document.getElementById('humidityCanvas'), {
+          type: 'line',
+          data: {
+            labels: ${JSON.stringify(readings.map(r => r.created_at * 1000))},
+            datasets: [{
+              label: "Humidity",
+              data: ${JSON.stringify(readings.map(r => r.humidity))},
               borderColor: 'rgb(75, 192, 192)',
             }],
           },
