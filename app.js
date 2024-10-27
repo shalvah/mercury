@@ -34,7 +34,7 @@ app.post(
     const humidity = c.req.query('hum')
     const ts = c.req.query('ts')
 
-    console.log({ reading, ts })
+    console.log({ readings: { temperature, humidity }, ts })
 
     const insert = db.prepare('INSERT INTO readings (temperature, humidity, created_at) VALUES (?, ?, ?)')
     const result = insert.run(temperature, humidity, ts)
