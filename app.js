@@ -32,6 +32,8 @@ app.post(
     const reading = c.req.query('r')
     const ts = c.req.query('ts')
 
+    console.log({ reading, ts })
+
     const insert = db.prepare('INSERT INTO readings (value, created_at) VALUES (?, ?)')
     const result = insert.run(reading, ts)
 
