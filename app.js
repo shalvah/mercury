@@ -8,6 +8,10 @@ const token = process.env.MERCURY_AUTH_TOKEN
 const username = process.env.MERCURY_USERNAME
 const password = process.env.MERCURY_PASSWORD
 
+if (!token || !username || !password) {
+  throw new Error(`Env vars MERCURY_AUTH_TOKEN, MERCURY_USERNAME, MERCURY_PASSWORD are required.`)
+}
+
 const db = new DatabaseSync('db.sqlite')
 db.exec(`
     CREATE TABLE IF NOT EXISTS readings
