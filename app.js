@@ -1,7 +1,17 @@
 import {Hono} from "hono";
+import { bearerAuth } from 'hono/bearer-auth'
 import { serve } from '@hono/node-server'
+import { DatabaseSync } from "node:sqlite";
 
-const auth = process.env.AUTH_TOKEN;
+const db = new DatabaseSync('db.sqlite')
+db.exec(`
+CREATE TABLE IF NOT EXISTS readings (
+    value REAL NOT NULL,
+    created_at INTEGER NOT NULL
+) STRICT
+`)
+
+const token = process.env.AUTH_TOKEN;
 
 const app = new Hono();
 
@@ -9,17 +19,15 @@ app.get('/', (c) => c.text("Alright, you found me. Happy?"))
 
 app.post(
   '/readings',
+  bearerAuth({ token }),
   (c) => {
-    const token = c.req.query('t')
-    if (token !== auth) {
-      return c.text('', 401)
-    }
-
     const reading = c.req.query('r')
+    const ts = c.req.query('ts')
 
-    store(r)
+    const insert = db.prepare('INSERT INTO readings (value, created_at) VALUES (?, ?)')
+    const result = insert.run(reading, ts)
 
-    return c.text('', 201)
+    return c.text(result.changes, 201)
 })
 
 serve({
