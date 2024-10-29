@@ -68,11 +68,15 @@ app.get(
               label: "Temperature (°C)",
               data: ${JSON.stringify(readings.map(r => r.temperature))},
               borderColor: 'red',
+              borderWidth: 1,
+              tension: 0.4,
             },
             {
               label: "Humidity (%)",
               data: ${JSON.stringify(readings.map(r => r.humidity))},
               borderColor: 'blue',
+              borderWidth: 1,
+              tension: 0.4,
             }
             ],
           },
