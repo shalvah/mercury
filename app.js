@@ -70,6 +70,7 @@ app.get(
               borderColor: 'red',
               borderWidth: 1,
               tension: 0.4,
+              pointRadius: 1,
             },
             {
               label: "Humidity (%)",
@@ -77,6 +78,7 @@ app.get(
               borderColor: 'blue',
               borderWidth: 1,
               tension: 0.4,
+              pointRadius: 1,
             }
             ],
           },
