@@ -1,15 +1,12 @@
 import {Hono} from "hono"
 import {bearerAuth} from 'hono/bearer-auth'
-import {basicAuth} from 'hono/basic-auth'
 import {serve} from '@hono/node-server'
 import {DatabaseSync} from "node:sqlite"
 
 const token = process.env.MERCURY_AUTH_TOKEN
-const username = process.env.MERCURY_USERNAME
-const password = process.env.MERCURY_PASSWORD
 
-if (!token || !username || !password) {
-  throw new Error(`Env vars MERCURY_AUTH_TOKEN, MERCURY_USERNAME, MERCURY_PASSWORD are required.`)
+if (!token) {
+  throw new Error(`Missing env vars: MERCURY_AUTH_TOKEN.`)
 }
 
 const db = new DatabaseSync('db.sqlite')
@@ -44,9 +41,9 @@ app.post(
 
 app.get(
   '/chart',
-  basicAuth({username, password}),
   (c) => {
-    const days = c.req.query('days') || 1
+    let days = c.req.query('days') || 1
+    days = days > 30 ? 30 : days
     const query = db.prepare(
       `SELECT *
        FROM readings
