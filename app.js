@@ -68,7 +68,7 @@ app.get(
           data: {
             labels: ${JSON.stringify(readings.map(r => r.created_at * 1000))},
             datasets: [{
-              label: "Temperature",
+              label: "Temperature (°C)",
               data: ${JSON.stringify(readings.map(r => r.temperature))},
               borderColor: 'rgb(75, 192, 192)',
             }],
@@ -80,6 +80,10 @@ app.get(
                 time: {
                     unit: 'second',
                 }
+              },
+              y: {
+                suggestedMin: 14,
+                suggestedMax: 30,
               }
             }
           }
@@ -89,7 +93,7 @@ app.get(
           data: {
             labels: ${JSON.stringify(readings.map(r => r.created_at * 1000))},
             datasets: [{
-              label: "Humidity",
+              label: "Humidity (%)",
               data: ${JSON.stringify(readings.map(r => r.humidity))},
               borderColor: 'rgb(75, 192, 192)',
             }],
@@ -101,6 +105,10 @@ app.get(
                 time: {
                     unit: 'second',
                 }
+              },
+              y: {
+                suggestedMin: 40,
+                suggestedMax: 70,
               }
             }
           }
