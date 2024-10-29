@@ -6,7 +6,7 @@ import {DatabaseSync} from "node:sqlite"
 const token = process.env.MERCURY_AUTH_TOKEN
 
 if (!token) {
-  throw new Error(`Missing env vars: MERCURY_AUTH_TOKEN.`)
+  // throw new Error(`Missing env vars: MERCURY_AUTH_TOKEN.`)
 }
 
 const db = new DatabaseSync('db.sqlite')
@@ -67,8 +67,14 @@ app.get(
             datasets: [{
               label: "Temperature (°C)",
               data: ${JSON.stringify(readings.map(r => r.temperature))},
-              borderColor: 'rgb(75, 192, 192)',
-            }],
+              borderColor: 'red',
+            },
+            {
+              label: "Humidity (%)",
+              data: ${JSON.stringify(readings.map(r => r.humidity))},
+              borderColor: 'blue',
+            }
+            ],
           },
           options: {
             scales: {
@@ -81,31 +87,6 @@ app.get(
               y: {
                 suggestedMin: 14,
                 suggestedMax: 30,
-              }
-            }
-          }
-        });
-        const humidityChart = new Chart(document.getElementById('humidityCanvas'), {
-          type: 'line',
-          data: {
-            labels: ${JSON.stringify(readings.map(r => r.created_at * 1000))},
-            datasets: [{
-              label: "Humidity (%)",
-              data: ${JSON.stringify(readings.map(r => r.humidity))},
-              borderColor: 'rgb(75, 192, 192)',
-            }],
-          },
-          options: {
-            scales: {
-              x: {
-                type: 'timeseries',
-                time: {
-                    unit: 'second',
-                }
-              },
-              y: {
-                suggestedMin: 40,
-                suggestedMax: 70,
               }
             }
           }
