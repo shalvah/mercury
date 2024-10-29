@@ -50,7 +50,7 @@ app.get(
     const query = db.prepare(
       `SELECT *
        FROM readings
-       WHERE created_at >= unixepoch('now', '-? days')`
+       WHERE created_at >= unixepoch('now', '-' || ? || ' days')`
     );
     const readings = query.all(days);
 
