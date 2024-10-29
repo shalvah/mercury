@@ -46,9 +46,13 @@ app.get(
   '/chart',
   basicAuth({username, password}),
   (c) => {
-    const query = db.prepare(`SELECT *
-                              FROM readings`);
-    const readings = query.all();
+    const days = c.req.query('days') || 1
+    const query = db.prepare(
+      `SELECT *
+       FROM readings
+       WHERE created_at >= unixepoch('now', '-? days')`
+    );
+    const readings = query.all(days);
 
     const html = `
       <div><canvas id="temperatureCanvas"></canvas></div>
