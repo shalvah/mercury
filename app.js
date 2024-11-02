@@ -42,8 +42,8 @@ app.post(
 app.post(
   '/debug',
   bearerAuth({token}),
-  (c) => {
-    const message = c.req.query('msg')
+  async (c) => {
+    const message = await c.req.text()
 
     console.warn({ message })
 
