@@ -39,6 +39,17 @@ app.post(
     return c.text(result.changes, 201)
   })
 
+app.post(
+  '/debug',
+  bearerAuth({token}),
+  (c) => {
+    const message = c.req.query('msg')
+
+    console.log({ message })
+
+    return c.text('', 200)
+  })
+
 app.get(
   '/chart',
   (c) => {
