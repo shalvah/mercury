@@ -45,7 +45,7 @@ app.post(
   (c) => {
     const message = c.req.query('msg')
 
-    console.log({ message })
+    console.warn({ message })
 
     return c.text('', 200)
   })
